@@ -1,5 +1,7 @@
 package com.example.studentSpringBootDemo.student;
 
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.List;
  * @created 23/12/2024 - 11:47
  * @description
  */
+@Service
 public class StudentService {
     public List<Student> getStudents() {
         return Arrays.asList(
