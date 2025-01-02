@@ -22,14 +22,14 @@ public class StudentConfig {
                     1L,
                     "Paul",
                     "paul@test.com",
-                    LocalDate.of(2000, 1, 5),
-                    24);
+                    LocalDate.of(2000, 1, 5)
+                    );
 
             Student alex = new Student(
                     "Alex",
                     "alex@test.com",
-                    LocalDate.of(2001, 5, 25),
-                    23);
+                    LocalDate.of(2001, 5, 25)
+                    );
 
             studentRepository.saveAll(
                     Arrays.asList(paul, alex)
