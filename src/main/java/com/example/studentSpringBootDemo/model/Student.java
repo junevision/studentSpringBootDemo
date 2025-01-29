@@ -1,4 +1,4 @@
-package com.example.studentSpringBootDemo.student;
+package com.example.studentSpringBootDemo.model;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -10,23 +10,20 @@ import java.time.Period;
  * @description
  */
 @Entity
-@Table
+@Table(name = "tb_student")
 public class Student {
 
     @Id
-    @SequenceGenerator(
-            name = "student_sequence",
-            sequenceName = "student_sequence",
-            allocationSize = 1
-    )
     @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "student_sequence"
+            strategy = GenerationType.IDENTITY
     )
-
+    @Column(name = "id")
     private Long id;
+    @Column(name = "name")
     private String name;
+    @Column(name = "email")
     private String email;
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
     @Transient
     private Integer age;
