@@ -1,5 +1,9 @@
-package com.example.studentSpringBootDemo.student;
+package com.example.studentSpringBootDemo;
 
+import com.example.studentSpringBootDemo.model.Student;
+import com.example.studentSpringBootDemo.model.dto.StudentDto;
+import com.example.studentSpringBootDemo.repository.StudentRepository;
+import com.example.studentSpringBootDemo.service.StudentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -15,13 +19,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-class StudentServiceTest {
+class StudentServiceImplTest {
 
     @Mock
     private StudentRepository studentRepository;
 
     @InjectMocks
-    private StudentService studentService;
+    private StudentServiceImpl studentServiceImpl;
 
     @Captor
     private ArgumentCaptor<Student> studentArgumentCaptor;
@@ -33,24 +37,26 @@ class StudentServiceTest {
 
     @Test
     void canGetAllStudents() {
-        studentService.getStudents();
+        studentServiceImpl.getStudents();
         verify(studentRepository).findAll();
     }
 
     @Test
     void canAddNewStudent() {
-        Student student = new Student("John", "john@test.com", LocalDate.of(2000, 1, 1));
-        studentService.addNewStudent(student);
+        StudentDto studentDto = new StudentDto("John", "john@test.com", "2000-01-01");
+        studentServiceImpl.addNewStudent(studentDto);
         verify(studentRepository).save(studentArgumentCaptor.capture());
         Student capturedStudent = studentArgumentCaptor.getValue();
-        assertEquals(student, capturedStudent);
+        assertEquals(studentDto.getName(), capturedStudent.getName());
+        assertEquals(studentDto.getEmail(), capturedStudent.getEmail());
+        assertEquals(LocalDate.parse(studentDto.getDateOfBirth()), capturedStudent.getDateOfBirth());
     }
 
     @Test
     void willThrowWhenEmailIsTaken() {
-        Student student = new Student("John", "john@test.com", LocalDate.of(2000, 1, 1));
-        when(studentRepository.findStudentByEmail(student.getEmail())).thenReturn(Optional.of(student));
-        assertThatThrownBy(() -> studentService.addNewStudent(student))
+        StudentDto studentDto = new StudentDto("John", "john@test.com", "2000-01-01");
+        when(studentRepository.findStudentByEmail(studentDto.getEmail())).thenReturn(Optional.of(new Student()));
+        assertThatThrownBy(() -> studentServiceImpl.addNewStudent(studentDto))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("email is taken");
         verify(studentRepository, never()).save(any());
@@ -60,7 +66,7 @@ class StudentServiceTest {
     void canDeleteStudent() {
         Long studentId = 1L;
         when(studentRepository.existsById(studentId)).thenReturn(true);
-        studentService.deleteStudent(studentId);
+        studentServiceImpl.deleteStudent(studentId);
         verify(studentRepository).deleteById(studentId);
     }
 
@@ -68,7 +74,7 @@ class StudentServiceTest {
     void willThrowWhenStudentDoesNotExist() {
         Long studentId = 1L;
         when(studentRepository.existsById(studentId)).thenReturn(false);
-        assertThatThrownBy(() -> studentService.deleteStudent(studentId))
+        assertThatThrownBy(() -> studentServiceImpl.deleteStudent(studentId))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("student with id " + studentId + " does not exist");
         verify(studentRepository, never()).deleteById(any());
@@ -79,7 +85,8 @@ class StudentServiceTest {
         Long studentId = 1L;
         Student student = new Student("John", "john@test.com", LocalDate.of(2000, 1, 1));
         when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
-        studentService.updateStudent(studentId, "Jane", "jane@test.com");
+        StudentDto studentDto = new StudentDto(studentId, "Jane", "jane@test.com", "2000-01-01");
+        studentServiceImpl.updateStudent(studentDto);
         assertEquals("Jane", student.getName());
         assertEquals("jane@test.com", student.getEmail());
     }
@@ -90,7 +97,8 @@ class StudentServiceTest {
         Student student = new Student("John", "john@test.com", LocalDate.of(2000, 1, 1));
         when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
         when(studentRepository.findStudentByEmail("jane@test.com")).thenReturn(Optional.of(new Student()));
-        assertThatThrownBy(() -> studentService.updateStudent(studentId, "Jane", "jane@test.com"))
+        StudentDto studentDto = new StudentDto(studentId, "Jane", "jane@test.com", "2000-01-01");
+        assertThatThrownBy(() -> studentServiceImpl.updateStudent(studentDto))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("email is taken");
     }

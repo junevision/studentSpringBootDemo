@@ -1,5 +1,6 @@
-package com.example.studentSpringBootDemo.student;
+package com.example.studentSpringBootDemo.repository;
 
+import com.example.studentSpringBootDemo.model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
