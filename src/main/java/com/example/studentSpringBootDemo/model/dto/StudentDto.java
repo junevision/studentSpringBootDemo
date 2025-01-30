@@ -10,7 +10,6 @@ import javax.validation.constraints.NotEmpty;
  */
 public class StudentDto {
 
-    @NotEmpty(message = "Id is required")
     private Long id;
     @NotEmpty(message = "Name is required")
     private String name;

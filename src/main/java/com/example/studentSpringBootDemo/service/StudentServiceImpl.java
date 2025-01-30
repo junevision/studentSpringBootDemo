@@ -37,6 +37,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<StudentDto> getStudents() {
         return studentRepository.findAll().stream().map(student -> new StudentDto(
+                student.getId(),
                 student.getName(),
                 student.getEmail(),
                 student.getDateOfBirth().toString()

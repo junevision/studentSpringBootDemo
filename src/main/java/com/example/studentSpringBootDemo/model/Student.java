@@ -10,18 +10,21 @@ import java.time.Period;
  * @description
  */
 @Entity
-@Table(name = "tb_student")
+@Table(name = "student")
 public class Student {
 
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
+    @SequenceGenerator(
+            name = "student_sequence",
+            sequenceName = "student_sequence",
+            allocationSize = 1
     )
-    @Column(name = "id")
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "student_sequence"
+    )
     private Long id;
-    @Column(name = "name")
     private String name;
-    @Column(name = "email")
     private String email;
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
