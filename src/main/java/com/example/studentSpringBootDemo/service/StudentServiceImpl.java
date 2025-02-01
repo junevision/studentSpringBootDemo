@@ -1,5 +1,6 @@
 package com.example.studentSpringBootDemo.service;
 
+import com.example.studentSpringBootDemo.exception.ServiceException;
 import com.example.studentSpringBootDemo.model.Student;
 import com.example.studentSpringBootDemo.model.dto.StudentDto;
 import com.example.studentSpringBootDemo.repository.StudentRepository;
@@ -31,7 +32,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student getStudent(Long studentId) {
         return studentRepository.findById(studentId)
-                .orElseThrow(() -> new IllegalStateException("student with id " + studentId + " does not exist"));
+                .orElseThrow(() -> new ServiceException(20001, "student with id " + studentId + " does not exist"));
     }
 
     @Override
@@ -48,7 +49,7 @@ public class StudentServiceImpl implements StudentService {
     public Student addNewStudent(StudentDto studentDto) {
         Optional<Student> studentOptional = studentRepository.findStudentByEmail(studentDto.getEmail());
         if (studentOptional.isPresent()) {
-            throw new IllegalStateException("email is taken");
+            throw new ServiceException(20002, "email is taken");
         }
         Student student = new Student(
                 studentDto.getName(),
@@ -60,9 +61,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void deleteStudent(Long studentId) {
-        Boolean exists = studentRepository.existsById(studentId);
+        boolean exists = studentRepository.existsById(studentId);
         if (!exists) {
-            throw new IllegalStateException("student with id " + studentId + " does not exist");
+            throw new ServiceException(20001, "student with id " + studentId + " does not exist");
         }
         studentRepository.deleteById(studentId);
     }
@@ -71,21 +72,21 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public Student updateStudent(StudentDto studentDto) {
         Student student = studentRepository.findById(studentDto.getId())
-                .orElseThrow(() -> new IllegalStateException("student with id " + studentDto.getId() + " does not exist"));
+                .orElseThrow(() -> new ServiceException(20001, "student with id " + studentDto.getId() + " does not exist"));
 
-        if (studentDto.getName() != null && studentDto.getName().length() > 0 && !Objects.equals(student.getName(), studentDto.getName())) {
+        if (studentDto.getName() != null && !studentDto.getName().isEmpty() && !Objects.equals(student.getName(), studentDto.getName())) {
             student.setName(studentDto.getName());
         }
 
-        if (studentDto.getEmail() != null && studentDto.getEmail().length() > 0 && !Objects.equals(student.getEmail(), studentDto.getEmail())) {
+        if (studentDto.getEmail() != null && !studentDto.getEmail().isEmpty() && !Objects.equals(student.getEmail(), studentDto.getEmail())) {
             Optional<Student> studentOptional = studentRepository.findStudentByEmail(studentDto.getEmail());
             if (studentOptional.isPresent()) {
-                throw new IllegalStateException("email is taken");
+                throw new ServiceException(20002, "email is taken");
             }
             student.setEmail(studentDto.getEmail());
         }
 
-        if (studentDto.getDateOfBirth() != null && studentDto.getDateOfBirth().length() > 0 && !Objects.equals(student.getDateOfBirth(), LocalDate.parse(studentDto.getDateOfBirth()))) {
+        if (studentDto.getDateOfBirth() != null && !studentDto.getDateOfBirth().isEmpty() && !Objects.equals(student.getDateOfBirth(), LocalDate.parse(studentDto.getDateOfBirth()))) {
             student.setDateOfBirth(LocalDate.parse(studentDto.getDateOfBirth()));
         }
 

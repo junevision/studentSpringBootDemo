@@ -1,8 +1,7 @@
 package com.example.studentSpringBootDemo.exception;
 
 import com.example.studentSpringBootDemo.model.ResponseMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -15,14 +14,19 @@ import javax.servlet.http.HttpServletResponse;
  * @created 09/01/2025 - 12:26
  * @description
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
     @ExceptionHandler(value = Exception.class)
-    public ResponseMessage handleException(Exception e, HttpServletRequest request, HttpServletResponse response) {
-        logger.error("Exception: {}", e.getMessage());
+    public ResponseMessage exceptionHandler(Exception e, HttpServletRequest request, HttpServletResponse response) {
+        log.error("Exception: {}", e.getMessage());
         return new ResponseMessage<>(500, "error", null);
+    }
+
+    @ExceptionHandler(value = ServiceException.class)
+    public ResponseMessage serviceExceptionHandler(ServiceException e) {
+        log.error("Service Exception: {}", e.getMessage());
+        return new ResponseMessage<>(e.getCode(), e.getMessage(), null);
     }
 }

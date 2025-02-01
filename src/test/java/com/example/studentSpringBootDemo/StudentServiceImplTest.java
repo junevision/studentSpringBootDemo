@@ -1,5 +1,6 @@
 package com.example.studentSpringBootDemo;
 
+import com.example.studentSpringBootDemo.exception.ServiceException;
 import com.example.studentSpringBootDemo.model.Student;
 import com.example.studentSpringBootDemo.model.dto.StudentDto;
 import com.example.studentSpringBootDemo.repository.StudentRepository;
@@ -57,7 +58,7 @@ class StudentServiceImplTest {
         StudentDto studentDto = new StudentDto("John", "john@test.com", "2000-01-01");
         when(studentRepository.findStudentByEmail(studentDto.getEmail())).thenReturn(Optional.of(new Student()));
         assertThatThrownBy(() -> studentServiceImpl.addNewStudent(studentDto))
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(ServiceException.class)
                 .hasMessageContaining("email is taken");
         verify(studentRepository, never()).save(any());
     }
@@ -75,7 +76,7 @@ class StudentServiceImplTest {
         Long studentId = 1L;
         when(studentRepository.existsById(studentId)).thenReturn(false);
         assertThatThrownBy(() -> studentServiceImpl.deleteStudent(studentId))
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(ServiceException.class)
                 .hasMessageContaining("student with id " + studentId + " does not exist");
         verify(studentRepository, never()).deleteById(any());
     }
@@ -100,7 +101,7 @@ class StudentServiceImplTest {
         when(studentRepository.findStudentByEmail("jane@test.com")).thenReturn(Optional.of(new Student()));
         StudentDto studentDto = new StudentDto(studentId, "Jane", "jane@test.com", "2000-01-01");
         assertThatThrownBy(() -> studentServiceImpl.updateStudent(studentDto))
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(ServiceException.class)
                 .hasMessageContaining("email is taken");
     }
 }
