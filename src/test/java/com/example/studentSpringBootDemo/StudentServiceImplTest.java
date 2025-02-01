@@ -89,6 +89,7 @@ class StudentServiceImplTest {
         studentServiceImpl.updateStudent(studentDto);
         assertEquals("Jane", student.getName());
         assertEquals("jane@test.com", student.getEmail());
+        assertEquals(LocalDate.of(2000, 1, 1), student.getDateOfBirth());
     }
 
     @Test
