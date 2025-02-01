@@ -84,6 +84,11 @@ public class StudentServiceImpl implements StudentService {
             }
             student.setEmail(studentDto.getEmail());
         }
+
+        if (studentDto.getDateOfBirth() != null && studentDto.getDateOfBirth().length() > 0 && !Objects.equals(student.getDateOfBirth(), LocalDate.parse(studentDto.getDateOfBirth()))) {
+            student.setDateOfBirth(LocalDate.parse(studentDto.getDateOfBirth()));
+        }
+
         return student;
     }
 }

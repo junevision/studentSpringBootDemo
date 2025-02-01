@@ -15,6 +15,7 @@ public class StudentDto {
     private String name;
     @Email(message = "email format is not correct")
     private String email;
+    @NotEmpty(message = "Date of birth is required")
     private String dateOfBirth;
 
     public StudentDto() {
