@@ -33,8 +33,9 @@ public class StudentController {
     }
 
     @GetMapping
-    public List<StudentDto> getStudents() {
-        return studentService.getStudents();
+    public ResponseMessage getStudents() {
+        List<StudentDto> students = studentService.getStudents();
+        return ResponseMessage.success(students);
     }
 
     @PostMapping
@@ -44,8 +45,9 @@ public class StudentController {
     }
 
     @DeleteMapping(path = "{studentId}")
-    public void deleteStudent(@PathVariable("studentId") Long studentId) {
+    public ResponseMessage deleteStudent(@PathVariable("studentId") Long studentId) {
         studentService.deleteStudent(studentId);
+        return ResponseMessage.success();
     }
 
     @PutMapping
