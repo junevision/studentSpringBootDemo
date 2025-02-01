@@ -18,11 +18,11 @@ import javax.servlet.http.HttpServletResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(value = Exception.class)
     public ResponseMessage handleException(Exception e, HttpServletRequest request, HttpServletResponse response) {
-        log.error("Exception: {}", e.getMessage());
+        logger.error("Exception: {}", e.getMessage());
         return new ResponseMessage<>(500, "error", null);
     }
 }
