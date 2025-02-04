@@ -1,5 +1,6 @@
 package com.example.studentSpringBootDemo.service;
 
+import com.example.studentSpringBootDemo.exception.ErrorCode;
 import com.example.studentSpringBootDemo.exception.ServiceException;
 import com.example.studentSpringBootDemo.model.Student;
 import com.example.studentSpringBootDemo.model.dto.StudentDto;
@@ -32,7 +33,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student getStudent(Long studentId) {
         return studentRepository.findById(studentId)
-                .orElseThrow(() -> new ServiceException(20001, "student with id " + studentId + " does not exist"));
+                .orElseThrow(() -> new ServiceException(ErrorCode.STUDENT_NOT_EXISTS));
     }
 
     @Override
@@ -47,9 +48,22 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student addNewStudent(StudentDto studentDto) {
+
+        if (studentDto.getName() == null || studentDto.getName().isEmpty()) {
+            throw new ServiceException(ErrorCode.PARAM_NOT_VALID);
+        }
+
+        if (studentDto.getEmail() == null || studentDto.getEmail().isEmpty()) {
+            throw new ServiceException(ErrorCode.PARAM_NOT_VALID);
+        }
+
+        if (studentDto.getDateOfBirth() == null || studentDto.getDateOfBirth().isEmpty()) {
+            throw new ServiceException(ErrorCode.PARAM_NOT_VALID);
+        }
+
         Optional<Student> studentOptional = studentRepository.findStudentByEmail(studentDto.getEmail());
         if (studentOptional.isPresent()) {
-            throw new ServiceException(20002, "email is taken");
+            throw new ServiceException(ErrorCode.STUDENT_EMAIL_ALREADY_EXISTS);
         }
         Student student = new Student(
                 studentDto.getName(),
@@ -63,7 +77,7 @@ public class StudentServiceImpl implements StudentService {
     public void deleteStudent(Long studentId) {
         boolean exists = studentRepository.existsById(studentId);
         if (!exists) {
-            throw new ServiceException(20001, "student with id " + studentId + " does not exist");
+            throw new ServiceException(ErrorCode.STUDENT_NOT_EXISTS);
         }
         studentRepository.deleteById(studentId);
     }
@@ -72,7 +86,7 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public Student updateStudent(StudentDto studentDto) {
         Student student = studentRepository.findById(studentDto.getId())
-                .orElseThrow(() -> new ServiceException(20001, "student with id " + studentDto.getId() + " does not exist"));
+                .orElseThrow(() -> new ServiceException(ErrorCode.STUDENT_NOT_EXISTS));
 
         if (studentDto.getName() != null && !studentDto.getName().isEmpty() && !Objects.equals(student.getName(), studentDto.getName())) {
             student.setName(studentDto.getName());
@@ -81,7 +95,7 @@ public class StudentServiceImpl implements StudentService {
         if (studentDto.getEmail() != null && !studentDto.getEmail().isEmpty() && !Objects.equals(student.getEmail(), studentDto.getEmail())) {
             Optional<Student> studentOptional = studentRepository.findStudentByEmail(studentDto.getEmail());
             if (studentOptional.isPresent()) {
-                throw new ServiceException(20002, "email is taken");
+                throw new ServiceException(ErrorCode.STUDENT_EMAIL_ALREADY_EXISTS);
             }
             student.setEmail(studentDto.getEmail());
         }
