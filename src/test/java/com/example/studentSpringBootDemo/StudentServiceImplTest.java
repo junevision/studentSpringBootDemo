@@ -59,7 +59,7 @@ class StudentServiceImplTest {
         when(studentRepository.findStudentByEmail(studentDto.getEmail())).thenReturn(Optional.of(new Student()));
         assertThatThrownBy(() -> studentServiceImpl.addNewStudent(studentDto))
                 .isInstanceOf(ServiceException.class)
-                .hasMessageContaining("email is taken");
+                .hasMessageContaining("Student email already exists");
         verify(studentRepository, never()).save(any());
     }
 
@@ -77,7 +77,7 @@ class StudentServiceImplTest {
         when(studentRepository.existsById(studentId)).thenReturn(false);
         assertThatThrownBy(() -> studentServiceImpl.deleteStudent(studentId))
                 .isInstanceOf(ServiceException.class)
-                .hasMessageContaining("student with id " + studentId + " does not exist");
+                .hasMessageContaining("Student not exists");
         verify(studentRepository, never()).deleteById(any());
     }
 
@@ -102,6 +102,60 @@ class StudentServiceImplTest {
         StudentDto studentDto = new StudentDto(studentId, "Jane", "jane@test.com", "2000-01-01");
         assertThatThrownBy(() -> studentServiceImpl.updateStudent(studentDto))
                 .isInstanceOf(ServiceException.class)
-                .hasMessageContaining("email is taken");
+                .hasMessageContaining("Student email already exists");
+    }
+
+    @Test
+    void willThrowWhenAddingStudentWithMissingName() {
+        StudentDto studentDto = new StudentDto(null, "john@test.com", "2000-01-01");
+        assertThatThrownBy(() -> studentServiceImpl.addNewStudent(studentDto))
+                .isInstanceOf(ServiceException.class)
+                .hasMessageContaining("Parameter not valid");
+    }
+
+    @Test
+    void willThrowWhenAddingStudentWithMissingEmail() {
+        StudentDto studentDto = new StudentDto("John", null, "2000-01-01");
+        assertThatThrownBy(() -> studentServiceImpl.addNewStudent(studentDto))
+                .isInstanceOf(ServiceException.class)
+                .hasMessageContaining("Parameter not valid");
+    }
+
+    @Test
+    void willThrowWhenAddingStudentWithMissingDateOfBirth() {
+        StudentDto studentDto = new StudentDto("John", "john@test.com", null);
+        assertThatThrownBy(() -> studentServiceImpl.addNewStudent(studentDto))
+                .isInstanceOf(ServiceException.class)
+                .hasMessageContaining("Parameter not valid");
+    }
+
+    @Test
+    void willThrowWhenUpdatingStudentWithMissingName() {
+        Long studentId = 1L;
+        Student student = new Student("John", "john@test.com", LocalDate.of(2000, 1, 1));
+        when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
+        StudentDto studentDto = new StudentDto(studentId, null, "jane@test.com", "2000-01-01");
+        studentServiceImpl.updateStudent(studentDto);
+        assertEquals("John", student.getName());
+    }
+
+    @Test
+    void willThrowWhenUpdatingStudentWithMissingEmail() {
+        Long studentId = 1L;
+        Student student = new Student("John", "john@test.com", LocalDate.of(2000, 1, 1));
+        when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
+        StudentDto studentDto = new StudentDto(studentId, "Jane", null, "2000-01-01");
+        studentServiceImpl.updateStudent(studentDto);
+        assertEquals("john@test.com", student.getEmail());
+    }
+
+    @Test
+    void willThrowWhenUpdatingStudentWithMissingDateOfBirth() {
+        Long studentId = 1L;
+        Student student = new Student("John", "john@test.com", LocalDate.of(2000, 1, 1));
+        when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
+        StudentDto studentDto = new StudentDto(studentId, "Jane", "jane@test.com", null);
+        studentServiceImpl.updateStudent(studentDto);
+        assertEquals(LocalDate.of(2000, 1, 1), student.getDateOfBirth());
     }
 }

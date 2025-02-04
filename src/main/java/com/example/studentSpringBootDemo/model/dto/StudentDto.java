@@ -3,6 +3,7 @@ package com.example.studentSpringBootDemo.model.dto;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
 /**
@@ -14,11 +15,12 @@ import javax.validation.constraints.NotEmpty;
 public class StudentDto {
 
     private Long id;
-    @NotEmpty(message = "Name is required")
+    @NotBlank(message = "Name is required")
     private String name;
+    @NotEmpty(message = "Email is required")
     @Email(message = "email format is not correct")
     private String email;
-    @NotEmpty(message = "Date of birth is required")
+    @NotBlank(message = "Date of birth is required")
     private String dateOfBirth;
 
     public StudentDto() {
