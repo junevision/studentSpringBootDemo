@@ -49,18 +49,6 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student addNewStudent(StudentDto studentDto) {
 
-        if (studentDto.getName() == null || studentDto.getName().isEmpty()) {
-            throw new ServiceException(ErrorCode.PARAM_NOT_VALID);
-        }
-
-        if (studentDto.getEmail() == null || studentDto.getEmail().isEmpty()) {
-            throw new ServiceException(ErrorCode.PARAM_NOT_VALID);
-        }
-
-        if (studentDto.getDateOfBirth() == null || studentDto.getDateOfBirth().isEmpty()) {
-            throw new ServiceException(ErrorCode.PARAM_NOT_VALID);
-        }
-
         Optional<Student> studentOptional = studentRepository.findStudentByEmail(studentDto.getEmail());
         if (studentOptional.isPresent()) {
             throw new ServiceException(ErrorCode.STUDENT_EMAIL_ALREADY_EXISTS);
