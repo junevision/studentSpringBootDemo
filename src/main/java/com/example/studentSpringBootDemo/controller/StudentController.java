@@ -1,7 +1,6 @@
 package com.example.studentSpringBootDemo.controller;
 
 import com.example.studentSpringBootDemo.common.ResponseMessage;
-import com.example.studentSpringBootDemo.entity.Student;
 import com.example.studentSpringBootDemo.dto.StudentDto;
 import com.example.studentSpringBootDemo.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +26,8 @@ public class StudentController {
     }
 
     @GetMapping(path = "{studentId}")
-    public ResponseMessage<Student> getStudent(@PathVariable("studentId") Long studentId) {
-        Student student = studentService.getStudent(studentId);
+    public ResponseMessage<StudentDto> getStudent(@PathVariable("studentId") Long studentId) {
+        StudentDto student = studentService.getStudent(studentId);
         return ResponseMessage.success(student);
     }
 
@@ -39,8 +38,8 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseMessage<Student> registerNewStudent(@Validated @RequestBody StudentDto studentDto) {
-        Student student = studentService.addNewStudent(studentDto);
+    public ResponseMessage<StudentDto> registerNewStudent(@Validated @RequestBody StudentDto studentDto) {
+        StudentDto student = studentService.addNewStudent(studentDto);
         return ResponseMessage.success(student);
     }
 
@@ -51,8 +50,8 @@ public class StudentController {
     }
 
     @PutMapping
-    public ResponseMessage<Student> updateStudent(@Validated @RequestBody StudentDto studentDto) {
-        Student student = studentService.updateStudent(studentDto);
+    public ResponseMessage<StudentDto> updateStudent(@Validated @RequestBody StudentDto studentDto) {
+        StudentDto student = studentService.updateStudent(studentDto);
         return ResponseMessage.success(student);
     }
 }
