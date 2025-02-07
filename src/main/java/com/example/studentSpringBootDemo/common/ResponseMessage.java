@@ -1,4 +1,4 @@
-package com.example.studentSpringBootDemo.model;
+package com.example.studentSpringBootDemo.common;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;
