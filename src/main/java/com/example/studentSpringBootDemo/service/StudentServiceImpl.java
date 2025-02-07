@@ -31,9 +31,15 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student getStudent(Long studentId) {
-        return studentRepository.findById(studentId)
+    public StudentDto getStudent(Long studentId) {
+        Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new ServiceException(ErrorCode.STUDENT_NOT_EXISTS));
+        return new StudentDto(
+                student.getId(),
+                student.getName(),
+                student.getEmail(),
+                student.getDateOfBirth().toString()
+        );
     }
 
     @Override
@@ -47,18 +53,27 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student addNewStudent(StudentDto studentDto) {
+    public StudentDto addNewStudent(StudentDto studentDto) {
 
         Optional<Student> studentOptional = studentRepository.findStudentByEmail(studentDto.getEmail());
         if (studentOptional.isPresent()) {
             throw new ServiceException(ErrorCode.STUDENT_EMAIL_ALREADY_EXISTS);
         }
+
         Student student = new Student(
                 studentDto.getName(),
                 studentDto.getEmail(),
                 LocalDate.parse(studentDto.getDateOfBirth())
         );
-        return studentRepository.save(student);
+
+        studentRepository.save(student);
+
+        return new StudentDto(
+                student.getId(),
+                student.getName(),
+                student.getEmail(),
+                student.getDateOfBirth().toString()
+        );
     }
 
     @Override
@@ -72,7 +87,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    public Student updateStudent(StudentDto studentDto) {
+    public StudentDto updateStudent(StudentDto studentDto) {
         Student student = studentRepository.findById(studentDto.getId())
                 .orElseThrow(() -> new ServiceException(ErrorCode.STUDENT_NOT_EXISTS));
 
@@ -92,6 +107,13 @@ public class StudentServiceImpl implements StudentService {
             student.setDateOfBirth(LocalDate.parse(studentDto.getDateOfBirth()));
         }
 
-        return student;
+        studentRepository.save(student);
+
+        return new StudentDto(
+                student.getId(),
+                student.getName(),
+                student.getEmail(),
+                student.getDateOfBirth().toString()
+        );
     }
 }
