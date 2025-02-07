@@ -2,7 +2,7 @@ package com.example.studentSpringBootDemo.controller;
 
 import com.example.studentSpringBootDemo.common.ResponseMessage;
 import com.example.studentSpringBootDemo.entity.Student;
-import com.example.studentSpringBootDemo.entity.dto.StudentDto;
+import com.example.studentSpringBootDemo.dto.StudentDto;
 import com.example.studentSpringBootDemo.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -45,7 +45,7 @@ public class StudentController {
     }
 
     @DeleteMapping(path = "{studentId}")
-    public ResponseMessage deleteStudent(@PathVariable("studentId") Long studentId) {
+    public ResponseMessage<?> deleteStudent(@PathVariable("studentId") Long studentId) {
         studentService.deleteStudent(studentId);
         return ResponseMessage.success();
     }

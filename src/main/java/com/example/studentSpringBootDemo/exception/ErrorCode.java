@@ -12,7 +12,7 @@ public enum ErrorCode {
 
     STUDENT_NOT_EXISTS(10001, "Student not exists"),
     STUDENT_EMAIL_ALREADY_EXISTS(10002, "Student email already exists"),
-    ;
+    PARAMETER_ERROR(10003, "Parameter error");
 
     private final int code;
     private final String message;
