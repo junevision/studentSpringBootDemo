@@ -1,8 +1,8 @@
 package com.example.studentSpringBootDemo.controller;
 
-import com.example.studentSpringBootDemo.model.ResponseMessage;
-import com.example.studentSpringBootDemo.model.Student;
-import com.example.studentSpringBootDemo.model.dto.StudentDto;
+import com.example.studentSpringBootDemo.common.ResponseMessage;
+import com.example.studentSpringBootDemo.entity.Student;
+import com.example.studentSpringBootDemo.entity.dto.StudentDto;
 import com.example.studentSpringBootDemo.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -27,19 +27,19 @@ public class StudentController {
     }
 
     @GetMapping(path = "{studentId}")
-    public ResponseMessage getStudent(@PathVariable("studentId") Long studentId) {
+    public ResponseMessage<Student> getStudent(@PathVariable("studentId") Long studentId) {
         Student student = studentService.getStudent(studentId);
         return ResponseMessage.success(student);
     }
 
     @GetMapping
-    public ResponseMessage getStudents() {
+    public ResponseMessage<List<StudentDto>> getStudents() {
         List<StudentDto> students = studentService.getStudents();
         return ResponseMessage.success(students);
     }
 
     @PostMapping
-    public ResponseMessage registerNewStudent(@Validated @RequestBody StudentDto studentDto) {
+    public ResponseMessage<Student> registerNewStudent(@Validated @RequestBody StudentDto studentDto) {
         Student student = studentService.addNewStudent(studentDto);
         return ResponseMessage.success(student);
     }
@@ -51,7 +51,7 @@ public class StudentController {
     }
 
     @PutMapping
-    public ResponseMessage updateStudent(@Validated @RequestBody StudentDto studentDto) {
+    public ResponseMessage<Student> updateStudent(@Validated @RequestBody StudentDto studentDto) {
         Student student = studentService.updateStudent(studentDto);
         return ResponseMessage.success(student);
     }

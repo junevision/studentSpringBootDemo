@@ -1,7 +1,7 @@
 package com.example.studentSpringBootDemo.service;
 
-import com.example.studentSpringBootDemo.model.Student;
-import com.example.studentSpringBootDemo.model.dto.StudentDto;
+import com.example.studentSpringBootDemo.entity.Student;
+import com.example.studentSpringBootDemo.entity.dto.StudentDto;
 
 import java.util.List;
 

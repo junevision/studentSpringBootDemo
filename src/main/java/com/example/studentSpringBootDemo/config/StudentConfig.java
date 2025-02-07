@@ -1,6 +1,6 @@
 package com.example.studentSpringBootDemo.config;
 
-import com.example.studentSpringBootDemo.model.Student;
+import com.example.studentSpringBootDemo.entity.Student;
 import com.example.studentSpringBootDemo.repository.StudentRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;

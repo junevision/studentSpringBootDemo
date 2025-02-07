@@ -1,8 +1,8 @@
 package com.example.studentSpringBootDemo;
 
 import com.example.studentSpringBootDemo.exception.ServiceException;
-import com.example.studentSpringBootDemo.model.Student;
-import com.example.studentSpringBootDemo.model.dto.StudentDto;
+import com.example.studentSpringBootDemo.entity.Student;
+import com.example.studentSpringBootDemo.entity.dto.StudentDto;
 import com.example.studentSpringBootDemo.repository.StudentRepository;
 import com.example.studentSpringBootDemo.service.StudentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;

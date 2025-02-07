@@ -1,6 +1,6 @@
 package com.example.studentSpringBootDemo.exception;
 
-import com.example.studentSpringBootDemo.model.ResponseMessage;
+import com.example.studentSpringBootDemo.common.ResponseMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
