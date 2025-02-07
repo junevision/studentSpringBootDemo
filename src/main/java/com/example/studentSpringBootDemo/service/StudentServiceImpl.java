@@ -3,7 +3,7 @@ package com.example.studentSpringBootDemo.service;
 import com.example.studentSpringBootDemo.exception.ErrorCode;
 import com.example.studentSpringBootDemo.exception.ServiceException;
 import com.example.studentSpringBootDemo.entity.Student;
-import com.example.studentSpringBootDemo.entity.dto.StudentDto;
+import com.example.studentSpringBootDemo.dto.StudentDto;
 import com.example.studentSpringBootDemo.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

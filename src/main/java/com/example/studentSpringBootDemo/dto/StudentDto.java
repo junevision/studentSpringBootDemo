@@ -1,4 +1,4 @@
-package com.example.studentSpringBootDemo.entity.dto;
+package com.example.studentSpringBootDemo.dto;
 
 import lombok.Data;
 

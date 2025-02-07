@@ -2,11 +2,14 @@ package com.example.studentSpringBootDemo.exception;
 
 import com.example.studentSpringBootDemo.common.ResponseMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.stream.Collectors;
 
 
 /**
@@ -28,5 +31,14 @@ public class GlobalExceptionHandler {
     public ResponseMessage serviceExceptionHandler(ServiceException e) {
         log.error("Service Exception: {}", e.getMessage());
         return new ResponseMessage<>(e.getCode(), e.getMessage(), null);
+    }
+
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public ResponseMessage validationExceptionHandler(MethodArgumentNotValidException e) {
+        String errorMessage = e.getBindingResult().getAllErrors().stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                        .collect(Collectors.joining(","));
+        log.error("Validation Exception: {}", errorMessage);
+        return new ResponseMessage<>(ErrorCode.PARAMETER_ERROR.getCode(), errorMessage, null);
     }
 }
