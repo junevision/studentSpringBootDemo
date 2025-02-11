@@ -5,10 +5,12 @@ import com.example.studentSpringBootDemo.exception.ServiceException;
 import com.example.studentSpringBootDemo.entity.Student;
 import com.example.studentSpringBootDemo.dto.StudentDto;
 import com.example.studentSpringBootDemo.mapper.StudentMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,46 +35,25 @@ public class StudentServiceImpl implements StudentService {
     public StudentDto getStudent(Long studentId) {
         Student student = Optional.ofNullable(studentMapper.selectById(studentId))
                 .orElseThrow(() -> new ServiceException(ErrorCode.STUDENT_NOT_EXISTS));
-        return new StudentDto(
-                student.getId(),
-                student.getName(),
-                student.getEmail(),
-                student.getDateOfBirth().toString()
-        );
+        return convertToDto(student);
     }
 
     @Override
     public List<StudentDto> getStudents() {
-        return studentMapper.selectList(null).stream().map(student -> new StudentDto(
-                student.getId(),
-                student.getName(),
-                student.getEmail(),
-                student.getDateOfBirth().toString()
-        )).collect(Collectors.toList());
+        return studentMapper.selectList(null).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public StudentDto addNewStudent(StudentDto studentDto) {
-
-        Student existingStudent = studentMapper.findStudentByEmail(studentDto.getEmail());
-        if (existingStudent != null) {
+        if (studentMapper.findStudentByEmail(studentDto.getEmail()) != null) {
             throw new ServiceException(ErrorCode.STUDENT_EMAIL_ALREADY_EXISTS);
         }
 
-        Student student = new Student(
-                studentDto.getName(),
-                studentDto.getEmail(),
-                LocalDate.parse(studentDto.getDateOfBirth())
-        );
-
+        Student student = convertToEntity(studentDto);
         studentMapper.insert(student);
-
-        return new StudentDto(
-                student.getId(),
-                student.getName(),
-                student.getEmail(),
-                student.getDateOfBirth().toString()
-        );
+        return convertToDto(student);
     }
 
     @Override
@@ -105,12 +86,21 @@ public class StudentServiceImpl implements StudentService {
         }
 
         studentMapper.updateById(student);
+        return convertToDto(student);
+    }
 
-        return new StudentDto(
-                student.getId(),
-                student.getName(),
-                student.getEmail(),
-                student.getDateOfBirth().toString()
-        );
+    private StudentDto convertToDto(Student student) {
+        StudentDto studentDto = new StudentDto();
+        BeanUtils.copyProperties(student, studentDto);
+        studentDto.setDateOfBirth(student.getDateOfBirth().toString());
+        studentDto.setAge(Period.between(student.getDateOfBirth(), LocalDate.now()).getYears());
+        return studentDto;
+    }
+
+    private Student convertToEntity(StudentDto studentDto) {
+        Student student = new Student();
+        BeanUtils.copyProperties(studentDto, student);
+        student.setDateOfBirth(LocalDate.parse(studentDto.getDateOfBirth()));
+        return student;
     }
 }
