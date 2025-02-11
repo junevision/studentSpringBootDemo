@@ -1,10 +1,12 @@
 package com.example.studentSpringBootDemo.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.Period;
 
 /**
  * @author jun.lei
@@ -12,27 +14,15 @@ import java.time.Period;
  * @description
  */
 @Data
-@Entity
-@Table(name = "student")
+@TableName(value = "student")
 public class Student {
 
-    @Id
-    @SequenceGenerator(
-            name = "student_sequence",
-            sequenceName = "student_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "student_sequence"
-    )
+    @TableId(type = IdType.AUTO)
     private Long id;
     private String name;
     private String email;
-    @Column(name = "date_of_birth")
+    @TableField(value = "date_of_birth")
     private LocalDate dateOfBirth;
-    @Transient
-    private Integer age;
 
     public Student() {
     }
@@ -48,9 +38,5 @@ public class Student {
         this.name = name;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
-    }
-
-    public Integer getAge() {
-        return Period.between(this.dateOfBirth, LocalDate.now()).getYears();
     }
 }
