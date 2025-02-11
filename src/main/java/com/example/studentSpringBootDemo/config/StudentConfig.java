@@ -1,13 +1,13 @@
 package com.example.studentSpringBootDemo.config;
 
 import com.example.studentSpringBootDemo.entity.Student;
-import com.example.studentSpringBootDemo.repository.StudentRepository;
+import com.example.studentSpringBootDemo.mapper.StudentMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 
 /**
  * @author jun.lei
@@ -18,8 +18,11 @@ import java.util.Arrays;
 public class StudentConfig {
 
     @Bean
-    CommandLineRunner commandLineRunner(StudentRepository studentRepository) {
+    CommandLineRunner commandLineRunner(StudentMapper studentMapper, JdbcTemplate jdbcTemplate) {
         return args -> {
+            // Truncate the student table to reset IDs
+            jdbcTemplate.execute("TRUNCATE TABLE student");
+
             Student paul = new Student(
                     1L,
                     "Paul",
@@ -33,9 +36,8 @@ public class StudentConfig {
                     LocalDate.of(2001, 5, 25)
                     );
 
-            studentRepository.saveAll(
-                    Arrays.asList(paul, alex)
-            );
+            studentMapper.insert(paul);
+            studentMapper.insert(alex);
         };
     }
 }

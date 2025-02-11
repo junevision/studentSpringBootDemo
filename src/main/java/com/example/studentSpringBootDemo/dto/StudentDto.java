@@ -5,6 +5,8 @@ import lombok.Data;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDate;
+import java.time.Period;
 
 /**
  * @author jun.lei
@@ -22,6 +24,7 @@ public class StudentDto {
     private String email;
     @NotBlank(message = "Date of birth is required")
     private String dateOfBirth;
+    private Integer age;
 
     public StudentDto() {
     }
@@ -30,6 +33,7 @@ public class StudentDto {
         this.name = name;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
+        this.age = calculateAge(LocalDate.parse(dateOfBirth));
     }
 
     public StudentDto(Long id, String name, String email, String dateOfBirth) {
@@ -37,5 +41,10 @@ public class StudentDto {
         this.name = name;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
+        this.age = calculateAge(LocalDate.parse(dateOfBirth));
+    }
+
+    private Integer calculateAge(LocalDate dateOfBirth) {
+        return Period.between(dateOfBirth, LocalDate.now()).getYears();
     }
 }

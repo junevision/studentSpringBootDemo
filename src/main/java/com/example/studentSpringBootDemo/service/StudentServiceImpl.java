@@ -4,11 +4,10 @@ import com.example.studentSpringBootDemo.exception.ErrorCode;
 import com.example.studentSpringBootDemo.exception.ServiceException;
 import com.example.studentSpringBootDemo.entity.Student;
 import com.example.studentSpringBootDemo.dto.StudentDto;
-import com.example.studentSpringBootDemo.repository.StudentRepository;
+import com.example.studentSpringBootDemo.mapper.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -23,16 +22,16 @@ import java.util.stream.Collectors;
 @Service
 public class StudentServiceImpl implements StudentService {
 
-    private final StudentRepository studentRepository;
+    private final StudentMapper studentMapper;
 
     @Autowired
-    public StudentServiceImpl(StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
+    public StudentServiceImpl(StudentMapper studentMapper) {
+        this.studentMapper = studentMapper;
     }
 
     @Override
     public StudentDto getStudent(Long studentId) {
-        Student student = studentRepository.findById(studentId)
+        Student student = Optional.ofNullable(studentMapper.selectById(studentId))
                 .orElseThrow(() -> new ServiceException(ErrorCode.STUDENT_NOT_EXISTS));
         return new StudentDto(
                 student.getId(),
@@ -44,7 +43,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<StudentDto> getStudents() {
-        return studentRepository.findAll().stream().map(student -> new StudentDto(
+        return studentMapper.selectList(null).stream().map(student -> new StudentDto(
                 student.getId(),
                 student.getName(),
                 student.getEmail(),
@@ -55,8 +54,8 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentDto addNewStudent(StudentDto studentDto) {
 
-        Optional<Student> studentOptional = studentRepository.findStudentByEmail(studentDto.getEmail());
-        if (studentOptional.isPresent()) {
+        Student existingStudent = studentMapper.findStudentByEmail(studentDto.getEmail());
+        if (existingStudent != null) {
             throw new ServiceException(ErrorCode.STUDENT_EMAIL_ALREADY_EXISTS);
         }
 
@@ -66,7 +65,7 @@ public class StudentServiceImpl implements StudentService {
                 LocalDate.parse(studentDto.getDateOfBirth())
         );
 
-        studentRepository.save(student);
+        studentMapper.insert(student);
 
         return new StudentDto(
                 student.getId(),
@@ -78,17 +77,15 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void deleteStudent(Long studentId) {
-        boolean exists = studentRepository.existsById(studentId);
-        if (!exists) {
+        if (studentMapper.selectById(studentId) == null) {
             throw new ServiceException(ErrorCode.STUDENT_NOT_EXISTS);
         }
-        studentRepository.deleteById(studentId);
+        studentMapper.deleteById(studentId);
     }
 
     @Override
-    @Transactional
     public StudentDto updateStudent(StudentDto studentDto) {
-        Student student = studentRepository.findById(studentDto.getId())
+        Student student = Optional.ofNullable(studentMapper.selectById(studentDto.getId()))
                 .orElseThrow(() -> new ServiceException(ErrorCode.STUDENT_NOT_EXISTS));
 
         if (studentDto.getName() != null && !studentDto.getName().isEmpty() && !Objects.equals(student.getName(), studentDto.getName())) {
@@ -96,8 +93,8 @@ public class StudentServiceImpl implements StudentService {
         }
 
         if (studentDto.getEmail() != null && !studentDto.getEmail().isEmpty() && !Objects.equals(student.getEmail(), studentDto.getEmail())) {
-            Optional<Student> studentOptional = studentRepository.findStudentByEmail(studentDto.getEmail());
-            if (studentOptional.isPresent()) {
+            Student existingStudent = studentMapper.findStudentByEmail(studentDto.getEmail());
+            if (existingStudent != null) {
                 throw new ServiceException(ErrorCode.STUDENT_EMAIL_ALREADY_EXISTS);
             }
             student.setEmail(studentDto.getEmail());
@@ -107,7 +104,7 @@ public class StudentServiceImpl implements StudentService {
             student.setDateOfBirth(LocalDate.parse(studentDto.getDateOfBirth()));
         }
 
-        studentRepository.save(student);
+        studentMapper.updateById(student);
 
         return new StudentDto(
                 student.getId(),
