@@ -8,6 +8,7 @@ import com.example.studentSpringBootDemo.mapper.StudentMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -46,6 +47,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public StudentDto addNewStudent(StudentDto studentDto) {
         if (studentMapper.findStudentByEmail(studentDto.getEmail()) != null) {
             throw new ServiceException(ErrorCode.STUDENT_EMAIL_ALREADY_EXISTS);
@@ -65,6 +67,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public StudentDto updateStudent(StudentDto studentDto) {
         Student student = Optional.ofNullable(studentMapper.selectById(studentDto.getId()))
                 .orElseThrow(() -> new ServiceException(ErrorCode.STUDENT_NOT_EXISTS));
