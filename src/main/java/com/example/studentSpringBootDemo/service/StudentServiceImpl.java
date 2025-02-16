@@ -1,6 +1,6 @@
 package com.example.studentSpringBootDemo.service;
 
-import com.example.studentSpringBootDemo.exception.ErrorCode;
+import com.example.studentSpringBootDemo.enums.StudentErrorEnum;
 import com.example.studentSpringBootDemo.exception.ServiceException;
 import com.example.studentSpringBootDemo.entity.Student;
 import com.example.studentSpringBootDemo.dto.StudentDto;
@@ -35,7 +35,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentDto getStudent(Long studentId) {
         Student student = Optional.ofNullable(studentMapper.selectById(studentId))
-                .orElseThrow(() -> new ServiceException(ErrorCode.STUDENT_NOT_EXISTS));
+                .orElseThrow(() -> new ServiceException(StudentErrorEnum.STUDENT_NOT_EXISTS));
         return convertToDto(student);
     }
 
@@ -50,7 +50,7 @@ public class StudentServiceImpl implements StudentService {
     @Transactional(rollbackFor = Exception.class)
     public StudentDto addNewStudent(StudentDto studentDto) {
         if (studentMapper.findStudentByEmail(studentDto.getEmail()) != null) {
-            throw new ServiceException(ErrorCode.STUDENT_EMAIL_ALREADY_EXISTS);
+            throw new ServiceException(StudentErrorEnum.STUDENT_EMAIL_ALREADY_EXISTS);
         }
 
         Student student = convertToEntity(studentDto);
@@ -61,7 +61,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public void deleteStudent(Long studentId) {
         if (studentMapper.selectById(studentId) == null) {
-            throw new ServiceException(ErrorCode.STUDENT_NOT_EXISTS);
+            throw new ServiceException(StudentErrorEnum.STUDENT_NOT_EXISTS);
         }
         studentMapper.deleteById(studentId);
     }
@@ -70,7 +70,7 @@ public class StudentServiceImpl implements StudentService {
     @Transactional(rollbackFor = Exception.class)
     public StudentDto updateStudent(StudentDto studentDto) {
         Student student = Optional.ofNullable(studentMapper.selectById(studentDto.getId()))
-                .orElseThrow(() -> new ServiceException(ErrorCode.STUDENT_NOT_EXISTS));
+                .orElseThrow(() -> new ServiceException(StudentErrorEnum.STUDENT_NOT_EXISTS));
 
         if (studentDto.getName() != null && !studentDto.getName().isEmpty() && !Objects.equals(student.getName(), studentDto.getName())) {
             student.setName(studentDto.getName());
@@ -79,7 +79,7 @@ public class StudentServiceImpl implements StudentService {
         if (studentDto.getEmail() != null && !studentDto.getEmail().isEmpty() && !Objects.equals(student.getEmail(), studentDto.getEmail())) {
             Student existingStudent = studentMapper.findStudentByEmail(studentDto.getEmail());
             if (existingStudent != null) {
-                throw new ServiceException(ErrorCode.STUDENT_EMAIL_ALREADY_EXISTS);
+                throw new ServiceException(StudentErrorEnum.STUDENT_EMAIL_ALREADY_EXISTS);
             }
             student.setEmail(studentDto.getEmail());
         }
