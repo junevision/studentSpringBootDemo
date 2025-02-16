@@ -1,6 +1,7 @@
 package com.example.studentSpringBootDemo.exception;
 
 import com.example.studentSpringBootDemo.common.ResponseMessage;
+import com.example.studentSpringBootDemo.enums.StudentErrorEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -39,6 +40,6 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                         .collect(Collectors.joining(","));
         log.error("Validation Exception: {}", errorMessage);
-        return new ResponseMessage<>(ErrorCode.PARAMETER_ERROR.getCode(), errorMessage, null);
+        return new ResponseMessage<>(StudentErrorEnum.PARAMETER_ERROR.getCode(), errorMessage, null);
     }
 }

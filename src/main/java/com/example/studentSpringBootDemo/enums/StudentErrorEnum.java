@@ -1,5 +1,6 @@
-package com.example.studentSpringBootDemo.exception;
+package com.example.studentSpringBootDemo.enums;
 
+import com.example.studentSpringBootDemo.exception.CommonError;
 import lombok.Getter;
 
 /**
@@ -8,7 +9,7 @@ import lombok.Getter;
  * @description
  */
 @Getter
-public enum ErrorCode {
+public enum StudentErrorEnum implements CommonError {
 
     STUDENT_NOT_EXISTS(10001, "Student not exists"),
     STUDENT_EMAIL_ALREADY_EXISTS(10002, "Student email already exists"),
@@ -17,7 +18,7 @@ public enum ErrorCode {
     private final int code;
     private final String message;
 
-    ErrorCode(int code, String message) {
+    StudentErrorEnum(int code, String message) {
         this.code = code;
         this.message = message;
     }
